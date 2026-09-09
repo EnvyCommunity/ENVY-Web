@@ -93,8 +93,8 @@ h1, h2, h3, h4 { margin: 0; font-weight: 700; letter-spacing: -.02em; }
 .btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
 
 /* Píldora Discord del botón Conectar */
-.pill-discord { background: #5865F2; color: #fff; border: none; }
-.pill-discord:hover { background: #6b76f6; }
+.pill-discord { background: #32aaf2; color: #fff; border: none; }
+.pill-discord:hover { background: #228dcf; }
 
 /* ── Tarjetas ── */
 .card {

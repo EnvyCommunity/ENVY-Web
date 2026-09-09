@@ -1,0 +1,19 @@
+name = "envy-community"
+main = "worker.js"
+compatibility_date = "2024-09-01"
+
+# La web compilada (carpeta public/, con la web bajo public/lsrp/).
+[assets]
+directory = "./dist"
+binding = "ASSETS"
+
+# Base de datos (D1). Pon aquí el database_id que te dé "wrangler d1 create".
+[[d1_databases]]
+binding = "DB"
+database_name = "envy-community"
+database_id = "031df64a-2c7d-4262-a111-f5caa83aa884"
+
+# Almacenamiento de imágenes (R2).
+[[r2_buckets]]
+binding = "BUCKET"
+bucket_name = "envy-community-media"
