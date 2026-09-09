@@ -1,0 +1,1 @@
+Aquí va la carpeta de tiles de GTA V (styleSatelite/ styleAtlas/ styleGrid), descargada del enlace de MEGA del README de RiceaRaul/gta-v-map-leaflet. Con estas carpetas presentes, el mapa se conecta solo (Ajustes → Mapa → Tiles GTA V, URL base = /lsrp/mapStyles).
