@@ -45,7 +45,7 @@ export function AdminLanding({ value, onChange, notify }: { value: Landing; onCh
         <Field label="Antetítulo"><input className="input" value={d.hero.eyebrow} onChange={(e) => set({ hero: { ...d.hero, eyebrow: e.target.value } })} /></Field>
         <Field label="Título (una línea por salto)" hint="Usa Enter para partir el título en dos líneas."><TextArea rows={2} value={d.hero.title} onChange={(v) => set({ hero: { ...d.hero, title: v } })} /></Field>
         <Field label="Subtítulo"><TextArea value={d.hero.subtitle} onChange={(v) => set({ hero: { ...d.hero, subtitle: v } })} /></Field>
-        <ImgField label="Imagen de fondo del hero" url={d.hero.bg} onChange={(u) => set({ hero: { ...d.hero, bg: u } })} notify={notify} />
+        <ImgField label="Imagen de fondo del hero (a pantalla completa)" url={d.hero.bg} onChange={(u) => set({ hero: { ...d.hero, bg: u } })} notify={notify} />
         <div className="grid-2">
           <div className="subcard" style={{ background: 'var(--bg-base)' }}>
             <div className="eyebrow" style={{ marginBottom: 8 }}>Botón principal</div>
@@ -58,22 +58,6 @@ export function AdminLanding({ value, onChange, notify }: { value: Landing; onCh
             <Field label="Enlace"><input className="input" value={d.hero.ctaSecondary.href} onChange={(e) => set({ hero: { ...d.hero, ctaSecondary: { ...d.hero.ctaSecondary, href: e.target.value } } })} /></Field>
           </div>
         </div>
-      </div>
-
-      {/* Estadísticas */}
-      <div className="subcard">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-          <h3>Estadísticas</h3>
-          <button className="btn btn-sm" onClick={() => set({ stats: [...d.stats, { icon: 'star', value: '', label: '' }] })}><Icon name="plus" size={14} /> Añadir</button>
-        </div>
-        {d.stats.map((s, i) => (
-          <div key={i} style={{ display: 'grid', gridTemplateColumns: '130px 1fr 1fr 40px', gap: 8, marginBottom: 8 }}>
-            <IconSelect value={s.icon} onChange={(v) => set({ stats: patch(d.stats, i, { icon: v }) })} />
-            <input className="input" placeholder="Valor (+2.500)" value={s.value} onChange={(e) => set({ stats: patch(d.stats, i, { value: e.target.value }) })} />
-            <input className="input" placeholder="Etiqueta (Miembros)" value={s.label} onChange={(e) => set({ stats: patch(d.stats, i, { label: e.target.value }) })} />
-            <button className="icon-btn" onClick={() => set({ stats: d.stats.filter((_, j) => j !== i) })}><Icon name="trash" size={15} /></button>
-          </div>
-        ))}
       </div>
 
       {/* Sección de características */}

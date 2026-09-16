@@ -59,10 +59,18 @@ export interface Settings {
   seo: { title: string; description: string };
 }
 
-// ── Normativas ──
-export interface NormArticulo { id: string; title: string; html: string }
-export interface NormSeccion { id: string; icon: string; title: string; articulos: NormArticulo[] }
-export interface Normativas { intro: string; secciones: NormSeccion[] }
+// ── Normativas (PDFs) ──
+export interface NormDoc {
+  id: string;
+  icon: string;
+  title: string;
+  pdfUrl: string;
+  fileName: string;
+}
+export interface Normativas {
+  intro: string;
+  docs: NormDoc[];
+}
 
 // ── Mapeados (interiores disponibles) ──
 export interface Mapeado {

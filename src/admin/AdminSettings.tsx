@@ -29,7 +29,7 @@ export function AdminSettings({ value, onChange, notify }: { value: Settings; on
         <h3 style={{ marginBottom: 12 }}>General</h3>
         <div className="grid-2">
           <Field label="Nombre del servidor"><input className="input" value={d.serverName} onChange={(e) => set({ serverName: e.target.value })} /></Field>
-          <Field label="Texto del botón «Conectar»"><input className="input" value={d.connectLabel} onChange={(e) => set({ connectLabel: e.target.value })} /></Field>
+          <Field label="Texto del botón Discord"><input className="input" value={d.connectLabel} onChange={(e) => set({ connectLabel: e.target.value })} /></Field>
         </div>
         <div className="grid-2">
           <Field label="Enlace de Discord"><input className="input" value={d.discordUrl} onChange={(e) => set({ discordUrl: e.target.value })} /></Field>

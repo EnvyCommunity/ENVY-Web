@@ -137,7 +137,7 @@ function MapeadoDetalle({ mapeado, settings, onClose }: { mapeado: Mapeado; sett
           {zi && <div className="prop-zone" style={{ marginTop: 4 }}><Icon name="pin" size={15} /> {zi.label}</div>}
           {mapeado.descripcion && <p className="muted" style={{ marginTop: 14 }}>{mapeado.descripcion}</p>}
           <a className="btn pill-discord btn-block" style={{ marginTop: 16 }} href={settings.discordUrl || '#'} target="_blank" rel="noreferrer">
-            <Icon name="discord" size={18} /> Consultar en Discord
+            <Icon name="discord" size={18} /> Discord
           </a>
         </div>
       </div>

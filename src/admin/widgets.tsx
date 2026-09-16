@@ -15,19 +15,17 @@ export function Field({ label, children, hint }: { label: string; children: Reac
   );
 }
 
-export function TextInput({ value, onChange, placeholder, type = 'text' }: {
-  value: string | number; onChange: (v: string) => void; placeholder?: string; type?: string;
-}) {
-  return <input className="input" type={type} value={value} placeholder={placeholder} onChange={(e) => onChange(e.target.value)} />;
-}
-
 export function TextArea({ value, onChange, rows = 4 }: { value: string; onChange: (v: string) => void; rows?: number }) {
   return <textarea className="textarea" rows={rows} value={value} onChange={(e) => onChange(e.target.value)} />;
 }
 
-// Subida de una o varias imágenes a R2. Devuelve las URLs por onDone.
-export function Uploader({ multiple, onDone, notify, label = 'Subir imagen' }: {
-  multiple?: boolean; onDone: (urls: string[]) => void; notify: Notify; label?: string;
+// Subida de archivos a R2. Devuelve las URLs por onDone (y opcionalmente los File).
+export function Uploader({ multiple, onDone, notify, label = 'Subir imagen', accept = 'image/*' }: {
+  multiple?: boolean;
+  onDone: (urls: string[], files?: File[]) => void;
+  notify: Notify;
+  label?: string;
+  accept?: string;
 }) {
   const ref = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
@@ -35,21 +33,32 @@ export function Uploader({ multiple, onDone, notify, label = 'Subir imagen' }: {
     if (!files || !files.length) return;
     setBusy(true);
     try {
+      const list = Array.from(files);
       const urls: string[] = [];
-      for (const f of Array.from(files)) {
+      for (const f of list) {
         const { url } = await api.upload(f);
         urls.push(url);
       }
-      onDone(urls);
-    } catch { notify('No se pudo subir la imagen', 'err'); }
-    finally { setBusy(false); if (ref.current) ref.current.value = ''; }
+      onDone(urls, list);
+    } catch {
+      notify(accept.includes('pdf') ? 'No se pudo subir el PDF' : 'No se pudo subir la imagen', 'err');
+    } finally {
+      setBusy(false);
+      if (ref.current) ref.current.value = '';
+    }
   }
+  const isPdf = accept.includes('pdf');
   return (
     <>
       <div className="uploader" onClick={() => ref.current?.click()}>
-        {busy ? 'Subiendo…' : <><Icon name="image" size={16} style={{ verticalAlign: -3, marginRight: 6 }} />{label}</>}
+        {busy
+          ? 'Subiendo…'
+          : <>
+              <Icon name={isPdf ? 'book' : 'image'} size={16} style={{ verticalAlign: -3, marginRight: 6 }} />
+              {label}
+            </>}
       </div>
-      <input ref={ref} type="file" accept="image/*" multiple={multiple} hidden
+      <input ref={ref} type="file" accept={accept} multiple={multiple} hidden
         onChange={(e) => handle(e.target.files)} />
     </>
   );

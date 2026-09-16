@@ -33,7 +33,7 @@ export function Header({ settings, route }: { settings: Settings; route: string 
         </nav>
 
         <a className="btn pill-discord" href={connect} target="_blank" rel="noreferrer">
-          <Icon name="discord" size={18} /> {settings.connectLabel || 'Conectar'}
+          <Icon name="discord" size={18} /> Discord
         </a>
         <button className="nav-burger" onClick={() => setOpen((o) => !o)} aria-label="Menú">
           <Icon name={open ? 'x' : 'drag'} size={22} />

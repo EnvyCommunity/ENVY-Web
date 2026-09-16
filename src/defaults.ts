@@ -25,7 +25,7 @@ export const DEFAULT_SETTINGS: Settings = {
   logoUrl: '',
   discordUrl: 'https://discord.gg/',
   tebexUrl: '',
-  connectLabel: 'Conectar',
+  connectLabel: 'Discord',
   nav: [
     { label: 'Inicio', href: '#/' },
     { label: 'Normativas', href: '#/normativas' },
@@ -60,7 +60,7 @@ export const DEFAULT_LANDING: Landing = {
     title: 'TU HISTORIA\nEMPIEZA AQUÍ',
     subtitle: 'Una ciudad viva, realista y llena de oportunidades. Únete a una comunidad que lleva el roleplay al siguiente nivel.',
     bg: '',
-    ctaPrimary: { label: 'Unirse al servidor', href: 'https://discord.gg/' },
+    ctaPrimary: { label: 'Discord', href: 'https://discord.gg/' },
     ctaSecondary: { label: 'Ver normativas', href: '#/normativas' },
   },
   stats: [
@@ -96,25 +96,6 @@ export const DEFAULT_MAPEADOS: Mapeado[] = [
 ];
 
 export const DEFAULT_NORMATIVAS: Normativas = {
-  intro: 'El respeto y el buen roleplay hacen grande esta ciudad. Lee y comprende las normativas antes de jugar.',
-  secciones: [
-    {
-      id: 'introduccion', icon: 'info', title: 'Introducción',
-      articulos: [
-        { id: 'i1', title: '1. Introducción', html: '<p>Estas normativas existen para asegurar una experiencia de juego justa, realista y divertida para todos los miembros de la comunidad. El desconocimiento de las normas no exime de su cumplimiento.</p><div class="callout"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg><div><em>&ldquo;El roleplay es libertad, pero con respeto.&rdquo;</em></div></div>' },
-        { id: 'i2', title: '1.1. Objetivo del servidor', html: '<p>Nuestro objetivo es ofrecer una ciudad viva, realista y coherente, donde cada jugador pueda desarrollar su historia dentro de un entorno serio y de calidad.</p><ul><li>Fomentar el roleplay realista.</li><li>Crear una comunidad sana y madura.</li><li>Mantener un entorno de juego estable y libre de toxicidad.</li><li>Ofrecer una experiencia única y duradera.</li></ul>' },
-      ],
-    },
-    { id: 'generales', icon: 'shield', title: 'Normas Generales', articulos: [{ id: 'g1', title: '2. Comportamiento', html: '<p>Trata a todos con respeto, dentro y fuera del rol. No se tolera el racismo, la discriminación ni la toxicidad.</p><ul><li>Prohibido el insulto grave.</li><li>Prohibido el contenido ofensivo en nombres o negocios.</li><li>El staff tiene la última palabra en una incidencia.</li></ul>' }] },
-    { id: 'roleplay', icon: 'users', title: 'Roleplay (IC / OOC)', articulos: [{ id: 'r1', title: '3. IC y OOC', html: '<p><strong>IC:</strong> lo que ocurre dentro del personaje. <strong>OOC:</strong> información de la vida real.</p><ul><li>Prohibido el Metagaming.</li><li>Prohibido el Powergaming.</li></ul>' }] },
-    { id: 'personajes', icon: 'user', title: 'Personajes', articulos: [{ id: 'p1', title: '4. Tu personaje', html: '<p>Desarrolla una historia coherente. Las muertes en rol tienen consecuencias sobre la memoria del personaje.</p>' }] },
-    { id: 'facciones', icon: 'flag', title: 'Facciones', articulos: [{ id: 'f1', title: '5. Facciones', html: '<p>Organizaciones legales o ilegales reconocidas por el staff, con jerarquía y narrativa coherente.</p>' }] },
-    { id: 'economia', icon: 'coin', title: 'Economía', articulos: [{ id: 'e1', title: '6. Economía', html: '<p>Economía cerrada y realista. Prohibido el uso de bugs económicos.</p>' }] },
-    { id: 'sanciones', icon: 'gavel', title: 'Sanciones', articulos: [{ id: 's1', title: '7. Sanciones', html: '<p>El incumplimiento conlleva sanciones que van del aviso al baneo permanente según gravedad y reincidencia.</p>' }] },
-    { id: 'casas', icon: 'house', title: 'Sistema de Casas', articulos: [{ id: 'c1', title: '8. Casas y propiedades', html: '<p>Explora el mapa por zonas y consulta los mapeados interiores disponibles en cada una.</p>' }] },
-    { id: 'vehiculos', icon: 'car', title: 'Vehículos', articulos: [{ id: 'v1', title: '9. Vehículos', html: '<p>Conduce de forma realista. El VDM está sancionado.</p>' }] },
-    { id: 'streams', icon: 'video', title: 'Streams y Contenido', articulos: [{ id: 'st1', title: '10. Creadores de contenido', html: '<p>Indica siempre el servidor. Prohibido el stream sniping.</p>' }] },
-    { id: 'discord', icon: 'discord', title: 'Discord', articulos: [{ id: 'd1', title: '11. Normas de Discord', html: '<p>El Discord es la vía oficial de comunicación. Respeta los canales.</p>' }] },
-    { id: 'terminos', icon: 'book', title: 'Términos Finales', articulos: [{ id: 't1', title: '12. Términos finales', html: '<p>Estas normativas pueden actualizarse en cualquier momento. Mantente informado.</p>' }] },
-  ],
+  intro: 'Consulta la normativa vigente del servidor. Puedes leerla aquí o descargarla en PDF.',
+  docs: [],
 };

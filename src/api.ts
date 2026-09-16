@@ -38,8 +38,9 @@ export const api = {
   deleteMapeado: (id: string) => req<{ ok: boolean }>('/admin/mapeados/' + encodeURIComponent(id), { method: 'DELETE' }),
 
   upload: async (file: File): Promise<{ url: string }> => {
+    const type = file.type || (file.name.toLowerCase().endsWith('.pdf') ? 'application/pdf' : 'application/octet-stream');
     const r = await fetch(BASE + '/admin/media?name=' + encodeURIComponent(file.name), {
-      method: 'PUT', headers: { 'content-type': file.type || 'application/octet-stream' }, body: file,
+      method: 'PUT', headers: { 'content-type': type }, body: file,
     });
     const data = await r.json().catch(() => ({}));
     if (!r.ok) throw Object.assign(new Error((data as any).error || 'error'), { status: r.status });

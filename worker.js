@@ -106,7 +106,7 @@ async function lsrpSet(env, k, v) {
 const LSRP_SEED = {
   settings: {
     serverName: 'ENVY Community', logoUrl: '', discordUrl: 'https://discord.gg/', tebexUrl: '',
-    connectLabel: 'Conectar',
+    connectLabel: 'Discord',
     nav: [
       { label: 'Inicio', href: '#/' }, { label: 'Normativas', href: '#/normativas' }, { label: 'Casas', href: '#/casas' },
       { label: 'Facciones', href: 'https://discord.gg/' }, { label: 'Comunidad', href: 'https://discord.gg/' }, { label: 'Soporte', href: 'https://discord.gg/' },
@@ -129,7 +129,7 @@ const LSRP_SEED = {
     seo: { title: 'ENVY Community', description: 'Una ciudad viva, realista y llena de oportunidades. Normativas, sistema de casas por zonas con mapa interactivo y comunidad.' },
   },
   landing: {
-    hero: { eyebrow: 'ENVY COMMUNITY', title: 'TU HISTORIA\nEMPIEZA AQUÍ', subtitle: 'Una ciudad viva, realista y llena de oportunidades. Únete a una comunidad que lleva el roleplay al siguiente nivel.', bg: '', ctaPrimary: { label: 'Unirse al servidor', href: 'https://discord.gg/' }, ctaSecondary: { label: 'Ver normativas', href: '#/normativas' } },
+    hero: { eyebrow: 'ENVY COMMUNITY', title: 'TU HISTORIA\nEMPIEZA AQUÍ', subtitle: 'Una ciudad viva, realista y llena de oportunidades. Únete a una comunidad que lleva el roleplay al siguiente nivel.', bg: '', ctaPrimary: { label: 'Discord', href: 'https://discord.gg/' }, ctaSecondary: { label: 'Ver normativas', href: '#/normativas' } },
     stats: [
       { icon: 'discord', value: '+2.500', label: 'Miembros' }, { icon: 'user', value: '+120', label: 'Roleplayers activos' },
       { icon: 'gear', value: '+10', label: 'Facciones oficiales' }, { icon: 'headset', value: '24/7', label: 'Servidor online' },
@@ -144,26 +144,8 @@ const LSRP_SEED = {
     banner: { title: 'UNA CIUDAD,\nINFINITAS HISTORIAS', text: 'Respeto, realismo y comunidad. Esto es más que un servidor, es una forma de vivir.', bg: '' },
   },
   normativas: {
-    intro: 'El respeto y el buen roleplay hacen grande esta ciudad. Lee y comprende las normativas antes de jugar.',
-    secciones: [
-      {
-        id: 'introduccion', icon: 'info', title: 'Introducción', articulos: [
-          { id: 'i1', title: '1. Introducción', html: '<p>Estas normativas existen para asegurar una experiencia de juego justa, realista y divertida para todos los miembros de la comunidad. El desconocimiento de las normas no exime de su cumplimiento.</p><div class="callout"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg><div><em>&ldquo;El roleplay es libertad, pero con respeto.&rdquo;</em></div></div>' },
-          { id: 'i2', title: '1.1. Objetivo del servidor', html: '<p>Nuestro objetivo es ofrecer una ciudad de Los Santos viva, realista y coherente.</p><ul><li>Fomentar el roleplay realista.</li><li>Crear una comunidad sana y madura.</li><li>Mantener un entorno estable y libre de toxicidad.</li><li>Ofrecer una experiencia única y duradera.</li></ul>' },
-        ]
-      },
-      { id: 'generales', icon: 'shield', title: 'Normas Generales', articulos: [{ id: 'g1', title: '2. Comportamiento', html: '<p>Trata a todos con respeto, dentro y fuera del rol. No se tolera el racismo, la discriminación ni la toxicidad.</p><ul><li>Prohibido el insulto grave.</li><li>Prohibido el contenido ofensivo en nombres o negocios.</li><li>El staff tiene la última palabra en una incidencia.</li></ul>' }] },
-      { id: 'roleplay', icon: 'users', title: 'Roleplay (IC / OOC)', articulos: [{ id: 'r1', title: '3. IC y OOC', html: '<p><strong>IC:</strong> lo que ocurre dentro del personaje. <strong>OOC:</strong> información de la vida real.</p><ul><li>Prohibido el Metagaming.</li><li>Prohibido el Powergaming.</li></ul>' }] },
-      { id: 'personajes', icon: 'user', title: 'Personajes', articulos: [{ id: 'p1', title: '4. Tu personaje', html: '<p>Desarrolla una historia coherente. Las muertes en rol tienen consecuencias sobre la memoria del personaje.</p>' }] },
-      { id: 'facciones', icon: 'flag', title: 'Facciones', articulos: [{ id: 'f1', title: '5. Facciones', html: '<p>Organizaciones legales o ilegales reconocidas por el staff, con jerarquía y narrativa coherente.</p>' }] },
-      { id: 'economia', icon: 'coin', title: 'Economía', articulos: [{ id: 'e1', title: '6. Economía', html: '<p>Economía cerrada y realista. Prohibido el uso de bugs económicos.</p>' }] },
-      { id: 'sanciones', icon: 'gavel', title: 'Sanciones', articulos: [{ id: 's1', title: '7. Sanciones', html: '<p>El incumplimiento conlleva sanciones que van del aviso al baneo permanente según gravedad y reincidencia.</p>' }] },
-      { id: 'casas', icon: 'house', title: 'Sistema de Casas', articulos: [{ id: 'c1', title: '8. Casas y propiedades', html: '<p>Compra o alquila propiedades según tu clase económica. Consulta el mapa de casas.</p>' }] },
-      { id: 'vehiculos', icon: 'car', title: 'Vehículos', articulos: [{ id: 'v1', title: '9. Vehículos', html: '<p>Conduce de forma realista. El VDM está sancionado.</p>' }] },
-      { id: 'streams', icon: 'video', title: 'Streams y Contenido', articulos: [{ id: 'st1', title: '10. Creadores de contenido', html: '<p>Indica siempre el servidor. Prohibido el stream sniping.</p>' }] },
-      { id: 'discord', icon: 'discord', title: 'Discord', articulos: [{ id: 'd1', title: '11. Normas de Discord', html: '<p>El Discord es la vía oficial de comunicación. Respeta los canales.</p>' }] },
-      { id: 'terminos', icon: 'book', title: 'Términos Finales', articulos: [{ id: 't1', title: '12. Términos finales', html: '<p>Estas normativas pueden actualizarse en cualquier momento. Mantente informado.</p>' }] },
-    ],
+    intro: 'Consulta la normativa vigente del servidor. Puedes leerla aquí o descargarla en PDF.',
+    docs: [],
   },
   mapeados: [
     { id: 'm-vw-1', zonas: ['vinewood'], nombre: 'Mansión moderna', imgs: [], precio: 550000, descripcion: 'Vistas panorámicas, piscina y garaje doble.', destacado: true, orden: 1 },
@@ -181,6 +163,15 @@ async function lsrpEnsureSeed(env) {
   if (!(await lsrpGet(env, 'settings'))) await lsrpSet(env, 'settings', LSRP_SEED.settings);
   if (!(await lsrpGet(env, 'landing'))) await lsrpSet(env, 'landing', LSRP_SEED.landing);
   if (!(await lsrpGet(env, 'normativas'))) await lsrpSet(env, 'normativas', LSRP_SEED.normativas);
+
+  // Migración: normativas pasan de HTML por secciones a PDFs (docs).
+  const norm = await lsrpGet(env, 'normativas');
+  if (norm && !Array.isArray(norm.docs)) {
+    await lsrpSet(env, 'normativas', {
+      intro: norm.intro || LSRP_SEED.normativas.intro,
+      docs: [],
+    });
+  }
 
   // Migración: las zonas antiguas no tenían color/polígono, y ya no hay
   // categorías. Se actualizan a la nueva forma (los datos de prod solo tenían
@@ -229,7 +220,7 @@ async function handleLsrp(request, env, url, ctx) {
   if (path === 'mapeados' && method === 'GET') {
     return json({ mapeados: await lsrpMapeados(env) }, 200, { 'cache-control': 'public, max-age=30' });
   }
-  // Servir una imagen de R2 (pública, cacheable): /lsrp/api/media?k=…
+  // Servir media de R2 (pública, cacheable): /lsrp/api/media?k=…
   if (path === 'media' && method === 'GET') {
     if (!env.BUCKET) return json({ error: 'r2_not_configured' }, 503);
     const key = url.searchParams.get('k') || '';
@@ -238,7 +229,13 @@ async function handleLsrp(request, env, url, ctx) {
     if (!obj) return json({ error: 'not_found' }, 404);
     const h = new Headers();
     obj.writeHttpMetadata(h);
+    const ct = h.get('content-type') || '';
+    if (ct.includes('pdf') || key.endsWith('.pdf')) {
+      h.set('content-type', 'application/pdf');
+      h.set('content-disposition', 'inline');
+    }
     h.set('cache-control', 'public, max-age=31536000, immutable');
+    h.set('x-content-type-options', 'nosniff');
     return new Response(obj.body, { headers: h });
   }
 
@@ -318,14 +315,16 @@ async function handleLsrp(request, env, url, ctx) {
     return json({ ok: true });
   }
 
-  // Subida de imágenes a R2: PUT /lsrp/api/admin/media?name=archivo.jpg
+  // Subida a R2: PUT /lsrp/api/admin/media?name=archivo.pdf
   if (path === 'admin/media' && method === 'PUT') {
     if (!env.BUCKET) return json({ error: 'r2_not_configured' }, 503);
-    const name = sanitizeHeader(url.searchParams.get('name') || 'img');
+    const name = sanitizeHeader(url.searchParams.get('name') || 'file');
     const ext = (name.match(/\.([a-z0-9]{2,5})$/i) || [, 'bin'])[1].toLowerCase();
     const key = 'lsrp/media/' + crypto.randomUUID() + '.' + ext;
+    let contentType = request.headers.get('content-type') || 'application/octet-stream';
+    if (ext === 'pdf') contentType = 'application/pdf';
     await env.BUCKET.put(key, request.body, {
-      httpMetadata: { contentType: request.headers.get('content-type') || 'application/octet-stream' },
+      httpMetadata: { contentType },
       customMetadata: { name },
     });
     return json({ ok: true, key, url: '/lsrp/api/media?k=' + encodeURIComponent(key) });

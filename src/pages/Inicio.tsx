@@ -17,45 +17,28 @@ function CtaLink({ link, cls }: { link: TLink; cls: string }) {
 }
 
 export function Inicio({ settings, landing }: { settings: Settings; landing: Landing; ready: boolean }) {
-  const { hero, stats, features, banner } = landing;
+  const { hero, features, banner } = landing;
+  const discord = settings.discordUrl || '#';
 
   return (
     <>
       {/* ── HERO ── */}
-      <section className="hero">
+      <section
+        className="hero"
+        style={hero.bg ? { backgroundImage: `url(${hero.bg})` } : undefined}
+      >
+        <div className="hero-shade" />
         <div className="wrap hero-inner">
-          <div>
+          <div className="hero-copy">
             <span className="eyebrow">{hero.eyebrow}</span>
             <h1>{multiline(hero.title)}</h1>
             <p className="lead">{hero.subtitle}</p>
             <div className="hero-cta">
-              <CtaLink link={hero.ctaPrimary} cls="btn btn-primary" />
+              <a className="btn pill-discord" href={hero.ctaPrimary.href || discord} {...extAttrs(hero.ctaPrimary.href || discord)}>
+                <Icon name="discord" size={18} /> Discord
+              </a>
               <CtaLink link={hero.ctaSecondary} cls="btn" />
             </div>
-          </div>
-          <div className="hero-media">
-            {hero.bg
-              ? <img src={hero.bg} alt="" />
-              : <div style={{ position: 'absolute', inset: 0, display: 'grid', placeItems: 'center',
-                  background: 'radial-gradient(120% 120% at 70% 20%, #23233a, #0c0c10 70%)' }}>
-                  <span style={{ fontFamily: 'Poppins', fontStyle: 'italic', fontWeight: 700,
-                    fontSize: 46, color: 'rgba(255,255,255,.14)' }}>Los Santos</span>
-                </div>}
-          </div>
-        </div>
-
-        {/* Barra de estadísticas */}
-        <div className="wrap" style={{ paddingBottom: 20 }}>
-          <div className="stats">
-            {stats.map((s, i) => (
-              <div className="stat" key={i}>
-                <div className="stat-ic"><Icon name={s.icon} size={20} /></div>
-                <div>
-                  <div className="stat-v">{s.value}</div>
-                  <div className="stat-l">{s.label}</div>
-                </div>
-              </div>
-            ))}
           </div>
         </div>
       </section>
@@ -86,13 +69,13 @@ export function Inicio({ settings, landing }: { settings: Settings; landing: Lan
         <div className="banner">
           {banner.bg
             ? <img src={banner.bg} alt="" />
-            : <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(120deg, #1a1a28, #0d0d12)' }} />}
+            : <div className="banner-fallback" />}
           <div className="banner-in">
             <h2>{multiline(banner.title)}</h2>
             <p>{banner.text}</p>
             <div className="hero-cta">
-              <a className="btn pill-discord" href={settings.discordUrl || '#'} target="_blank" rel="noreferrer">
-                <Icon name="discord" size={18} /> Unirse al Discord
+              <a className="btn pill-discord" href={discord} target="_blank" rel="noreferrer">
+                <Icon name="discord" size={18} /> Discord
               </a>
               {settings.tebexUrl
                 ? <a className="btn" href={settings.tebexUrl} target="_blank" rel="noreferrer">Tienda</a>

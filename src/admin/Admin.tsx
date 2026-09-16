@@ -42,7 +42,8 @@ export function Admin() {
     ]);
     if (pub?.settings) setSettings(pub.settings);
     if (pub?.landing) setLanding(pub.landing);
-    if (norm?.secciones) setNormativas(norm);
+    if (norm && Array.isArray((norm as Normativas).docs)) setNormativas(norm as Normativas);
+    else if (norm) setNormativas({ intro: (norm as Normativas).intro || DEFAULT_NORMATIVAS.intro, docs: [] });
     setMapeados(ms.mapeados || []);
   }
 
