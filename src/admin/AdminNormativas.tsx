@@ -15,10 +15,31 @@ export function AdminNormativas({ value, onChange, notify }: { value: Normativas
   const [busy, setBusy] = useState(false);
   const [active, setActive] = useState(0);
 
+  const apply = (next: Normativas) => {
+    setD(next);
+    onChange(next);
+  };
+
   const setDoc = (i: number, patch: Partial<NormDoc>) =>
     setD((p) => ({ ...p, docs: p.docs.map((doc, j) => j === i ? { ...doc, ...patch } : doc) }));
 
-  function addDoc(url: string, fileName: string) {
+  async function persist(next: Normativas, okMsg: string) {
+    setBusy(true);
+    try {
+      const r = await api.saveNormativas(next);
+      const saved = r.normativas && Array.isArray(r.normativas.docs) ? r.normativas : next;
+      apply(saved);
+      notify(okMsg);
+      return true;
+    } catch (err: any) {
+      notify(err?.status === 401 ? 'Sesión caducada: vuelve a entrar' : 'No se pudo guardar', 'err');
+      return false;
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function addDoc(url: string, fileName: string) {
     const doc: NormDoc = {
       id: genId('pdf-'),
       icon: 'book',
@@ -26,9 +47,9 @@ export function AdminNormativas({ value, onChange, notify }: { value: Normativas
       pdfUrl: url,
       fileName,
     };
-    setD((p) => ({ ...p, docs: [...p.docs, doc] }));
-    setActive(d.docs.length);
-    notify('PDF subido');
+    const next: Normativas = { intro: d.intro, docs: [...d.docs, doc] };
+    const ok = await persist(next, 'PDF subido y guardado');
+    if (ok) setActive(next.docs.length - 1);
   }
 
   function moveDoc(i: number, dir: -1 | 1) {
@@ -40,24 +61,35 @@ export function AdminNormativas({ value, onChange, notify }: { value: Normativas
     setActive(j);
   }
 
-  function removeDoc(i: number) {
+  async function removeDoc(i: number) {
+    const doomed = d.docs[i];
+    if (!doomed) return;
     if (!confirm('¿Eliminar este PDF de las normativas?')) return;
-    setD((p) => ({ ...p, docs: p.docs.filter((_, j) => j !== i) }));
-    setActive(0);
-  }
-
-  async function save() {
     setBusy(true);
     try {
-      const payload: Normativas = { intro: d.intro, docs: d.docs };
-      await api.saveNormativas(payload);
-      onChange(payload);
-      notify('Normativas guardadas');
-    } catch {
-      notify('No se pudo guardar', 'err');
+      const r = await api.deleteNormDoc(doomed.id);
+      apply(r.normativas);
+      setActive(0);
+      notify('PDF eliminado');
+    } catch (err: any) {
+      notify(err?.status === 401 ? 'Sesión caducada: vuelve a entrar' : 'No se pudo eliminar', 'err');
     } finally {
       setBusy(false);
     }
+  }
+
+  async function replacePdf(i: number, url: string, fileName: string) {
+    const prev = d.docs[i]?.pdfUrl;
+    const docs = d.docs.map((doc, j) => j === i ? { ...doc, pdfUrl: url, fileName } : doc);
+    const next: Normativas = { intro: d.intro, docs };
+    const ok = await persist(next, 'PDF reemplazado');
+    if (ok && prev && prev !== url) {
+      try { await api.deleteMedia(prev); } catch { /* ok */ }
+    }
+  }
+
+  async function save() {
+    await persist({ intro: d.intro, docs: d.docs }, 'Normativas guardadas');
   }
 
   const doc = d.docs[active];
@@ -76,7 +108,7 @@ export function AdminNormativas({ value, onChange, notify }: { value: Normativas
       <div className="subcard" style={{ marginBottom: 16 }}>
         <h3 style={{ marginBottom: 8 }}>Subir PDF</h3>
         <p className="hint" style={{ marginBottom: 10 }}>
-          Sube uno o varios PDFs (por ejemplo Normativa General, Comercios…). Los jugadores los verán con el lector integrado.
+          Sube uno o varios PDFs. Al subir o eliminar se guarda automáticamente en el servidor.
         </p>
         <Uploader
           accept="application/pdf,.pdf"
@@ -84,7 +116,7 @@ export function AdminNormativas({ value, onChange, notify }: { value: Normativas
           notify={notify}
           onDone={(urls, files) => {
             const file = files?.[0];
-            addDoc(urls[0], file?.name || 'normativa.pdf');
+            void addDoc(urls[0], file?.name || 'normativa.pdf');
           }}
         />
       </div>
@@ -114,9 +146,9 @@ export function AdminNormativas({ value, onChange, notify }: { value: Normativas
             </div>
 
             <div className="toolbar" style={{ marginBottom: 14 }}>
-              <button className="btn btn-sm" onClick={() => moveDoc(active, -1)}>↑ Subir</button>
-              <button className="btn btn-sm" onClick={() => moveDoc(active, 1)}>↓ Bajar</button>
-              <button className="btn btn-sm btn-danger" onClick={() => removeDoc(active)}>
+              <button className="btn btn-sm" disabled={busy} onClick={() => moveDoc(active, -1)}>↑ Subir</button>
+              <button className="btn btn-sm" disabled={busy} onClick={() => moveDoc(active, 1)}>↓ Bajar</button>
+              <button className="btn btn-sm btn-danger" disabled={busy} onClick={() => void removeDoc(active)}>
                 <Icon name="trash" size={14} /> Eliminar
               </button>
             </div>
@@ -130,11 +162,7 @@ export function AdminNormativas({ value, onChange, notify }: { value: Normativas
                   notify={notify}
                   onDone={(urls, files) => {
                     const file = files?.[0];
-                    setDoc(active, {
-                      pdfUrl: urls[0],
-                      fileName: file?.name || doc.fileName,
-                    });
-                    notify('PDF reemplazado');
+                    void replacePdf(active, urls[0], file?.name || doc.fileName);
                   }}
                 />
               </div>

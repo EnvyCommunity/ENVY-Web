@@ -19,8 +19,21 @@ export function AdminMapeados({ mapeados, setMapeados, settings, notify }: {
 
   async function remove(m: Mapeado) {
     if (!confirm(`¿Eliminar "${m.nombre}"?`)) return;
-    try { await api.deleteMapeado(m.id); setMapeados(mapeados.filter((x) => x.id !== m.id)); notify('Mapeado eliminado'); }
-    catch { notify('No se pudo eliminar', 'err'); }
+    try {
+      await api.deleteMapeado(m.id);
+      const check = await api.listMapeados().catch(() => null);
+      if (check && check.mapeados.some((x) => x.id === m.id)) {
+        notify('El servidor no borró el mapeado. Hay que actualizar el backend.', 'err');
+        return;
+      }
+      for (const u of m.imgs || []) {
+        try { await api.deleteMedia(u); } catch { /* best-effort */ }
+      }
+      setMapeados((check?.mapeados) || mapeados.filter((x) => x.id !== m.id));
+      notify('Mapeado eliminado');
+    } catch {
+      notify('No se pudo eliminar', 'err');
+    }
   }
 
   return (
@@ -63,14 +76,16 @@ export function AdminMapeados({ mapeados, setMapeados, settings, notify }: {
       {editing && (
         <MapeadoEditor mapeado={editing} settings={settings} notify={notify}
           onClose={() => setEditing(null)}
-          onSaved={(saved) => { setMapeados([...mapeados.filter((x) => x.id !== saved.id), saved]); setEditing(null); }} />
+          onSaved={(saved) => { setMapeados([...mapeados.filter((x) => x.id !== saved.id), saved]); setEditing(null); }}
+          onUpdated={(saved) => { setMapeados([...mapeados.filter((x) => x.id !== saved.id), saved]); setEditing(saved); }} />
       )}
     </>
   );
 }
 
-function MapeadoEditor({ mapeado, settings, notify, onClose, onSaved }: {
-  mapeado: Mapeado; settings: Settings; notify: Notify; onClose: () => void; onSaved: (m: Mapeado) => void;
+function MapeadoEditor({ mapeado, settings, notify, onClose, onSaved, onUpdated }: {
+  mapeado: Mapeado; settings: Settings; notify: Notify; onClose: () => void;
+  onSaved: (m: Mapeado) => void; onUpdated: (m: Mapeado) => void;
 }) {
   const [d, setD] = useState<Mapeado>(mapeado);
   const [busy, setBusy] = useState(false);
@@ -82,6 +97,29 @@ function MapeadoEditor({ mapeado, settings, notify, onClose, onSaved }: {
     setBusy(true);
     try { const r = await api.saveMapeado(d); notify('Mapeado guardado'); onSaved(r.mapeado); }
     catch { notify('No se pudo guardar', 'err'); } finally { setBusy(false); }
+  }
+
+  async function onImgsChange(next: string[]) {
+    const prev = d.imgs;
+    const removed = prev.filter((u) => !next.includes(u));
+    set({ imgs: next });
+    // Si ya existe en el servidor, persistir al quitar fotos (si no, al F5 vuelven).
+    if (!d.id || removed.length === 0) return;
+    setBusy(true);
+    try {
+      const r = await api.saveMapeado({ ...d, imgs: next });
+      setD(r.mapeado);
+      onUpdated(r.mapeado);
+      for (const u of removed) {
+        try { await api.deleteMedia(u); } catch { /* ok */ }
+      }
+      notify('Imagen eliminada');
+    } catch {
+      notify('No se pudo guardar el cambio de fotos', 'err');
+      set({ imgs: prev });
+    } finally {
+      setBusy(false);
+    }
   }
 
   return (
@@ -107,8 +145,8 @@ function MapeadoEditor({ mapeado, settings, notify, onClose, onSaved }: {
 
       <Field label="Descripción"><TextArea value={d.descripcion} onChange={(v) => set({ descripcion: v })} /></Field>
 
-      <Field label="Fotos del mapeado" hint="La primera foto es la portada que se ve en la lista.">
-        <ImageList urls={d.imgs} onChange={(u) => set({ imgs: u })} notify={notify} />
+      <Field label="Fotos del mapeado" hint="La primera foto es la portada. Al quitar una foto de un mapeado ya guardado, se borra al momento.">
+        <ImageList urls={d.imgs} onChange={(u) => void onImgsChange(u)} notify={notify} />
       </Field>
 
       <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 8 }}>

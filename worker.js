@@ -69,8 +69,8 @@ async function rateLimit(env, key, max, windowSec) {
 const clientIp = (request) => request.headers.get('CF-Connecting-IP') || 'anon';
 
 const LSRP_COOKIE = 'lsrp_admin';
-const lsrpCookie = (t) => `${LSRP_COOKIE}=${t}; HttpOnly; Secure; SameSite=Lax; Path=/lsrp; Max-Age=604800`;
-const lsrpClearCookie = () => `${LSRP_COOKIE}=; HttpOnly; Secure; SameSite=Lax; Path=/lsrp; Max-Age=0`;
+const lsrpCookie = (t) => `${LSRP_COOKIE}=${t}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=604800`;
+const lsrpClearCookie = () => `${LSRP_COOKIE}=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0`;
 
 async function lsrpMakeToken() {
   const exp = Date.now() + 604800000; // 7 días
@@ -105,13 +105,13 @@ async function lsrpSet(env, k, v) {
 // ── Siembra por defecto (contenido inicial que se ve nada más desplegar) ──
 const LSRP_SEED = {
   settings: {
-    serverName: 'ENVY Community', logoUrl: '', discordUrl: 'https://discord.gg/', tebexUrl: '',
+    serverName: 'ENVY Community', logoUrl: '', discordUrl: 'https://discord.gg/',     tebexUrl: 'https://envycommunity.tebex.io/',
     connectLabel: 'Discord',
     nav: [
       { label: 'Inicio', href: '#/' }, { label: 'Normativas', href: '#/normativas' }, { label: 'Casas', href: '#/casas' },
-      { label: 'Facciones', href: 'https://discord.gg/' }, { label: 'Comunidad', href: 'https://discord.gg/' }, { label: 'Soporte', href: 'https://discord.gg/' },
+      { label: 'Tienda', href: 'https://envycommunity.tebex.io/' },
     ],
-    socials: [{ label: 'Discord', href: 'https://discord.gg/' }, { label: 'Tienda', href: '' }],
+    socials: [{ label: 'Discord', href: 'https://discord.gg/' }, { label: 'Tienda', href: 'https://envycommunity.tebex.io/' }],
     colors: { primary: '#E6E6FA', accent: '#3ba9ff' },
     map: { mode: 'image', imageUrl: '/lsrp/mapa-satelite.jpg', imageW: 4096, imageH: 4096, tileBaseUrl: '', defaultStyle: 'atlas', minZoom: 1, maxZoom: 5 },
     zonas: [
@@ -188,15 +188,39 @@ async function lsrpEnsureSeed(env) {
     if (st.map && (!st.map.imageUrl || /map-placeholder/.test(st.map.imageUrl))) {
       st.map.imageUrl = '/lsrp/mapa-satelite.jpg'; st.map.imageW = 4096; st.map.imageH = 4096; changed = true;
     }
+    // Nav: quitar Facciones/Comunidad/Soporte y asegurar enlace Tienda → Tebex.
+    if (Array.isArray(st.nav)) {
+      const drop = /^(facciones|comunidad|soporte)$/i;
+      const cleaned = st.nav.filter((l) => !drop.test(String(l.label || '').trim()));
+      const hasTienda = cleaned.some((l) => /^tienda$/i.test(String(l.label || '').trim()));
+      const tebex = st.tebexUrl || LSRP_SEED.settings.tebexUrl;
+      if (!hasTienda && tebex) cleaned.push({ label: 'Tienda', href: tebex });
+      else if (hasTienda && tebex) {
+        for (const l of cleaned) {
+          if (/^tienda$/i.test(String(l.label || '').trim()) && (!l.href || l.href === '#')) l.href = tebex;
+        }
+      }
+      if (JSON.stringify(cleaned) !== JSON.stringify(st.nav)) {
+        st.nav = cleaned; changed = true;
+      }
+    }
     if (changed) await lsrpSet(env, 'settings', st);
   }
 
-  const n = await env.DB.prepare('SELECT COUNT(*) AS n FROM lsrp_mapeados').first();
-  if (!n || !n.n) {
-    for (const m of LSRP_SEED.mapeados) {
-      await env.DB.prepare('INSERT OR IGNORE INTO lsrp_mapeados (id, orden, json) VALUES (?1,?2,?3)')
-        .bind(m.id, m.orden || 0, JSON.stringify(m)).run();
+  // Sembrar mapeados SOLO una vez. Si se usa COUNT==0, al borrar el último
+  // vuelven a aparecer todos los de ejemplo en el siguiente request.
+  const seeded = await lsrpGet(env, 'mapeados_seeded');
+  if (!seeded) {
+    const n = await env.DB.prepare('SELECT COUNT(*) AS n FROM lsrp_mapeados').first();
+    if (!n || !n.n) {
+      for (const m of LSRP_SEED.mapeados) {
+        const row = { ...m, zona: Array.isArray(m.zonas) ? m.zonas[0] : (m.zona || ''), imgs: m.imgs || [] };
+        delete row.zonas;
+        await env.DB.prepare('INSERT OR IGNORE INTO lsrp_mapeados (id, orden, json) VALUES (?1,?2,?3)')
+          .bind(row.id, row.orden || 0, JSON.stringify(row)).run();
+      }
     }
+    await lsrpSet(env, 'mapeados_seeded', true);
   }
 }
 async function lsrpMapeados(env) {
@@ -215,10 +239,10 @@ async function handleLsrp(request, env, url, ctx) {
       200, { 'cache-control': 'public, max-age=30' });
   }
   if (path === 'normativas' && method === 'GET') {
-    return json(await lsrpGet(env, 'normativas'), 200, { 'cache-control': 'public, max-age=30' });
+    return json(await lsrpGet(env, 'normativas'), 200, { 'cache-control': 'private, no-store' });
   }
   if (path === 'mapeados' && method === 'GET') {
-    return json({ mapeados: await lsrpMapeados(env) }, 200, { 'cache-control': 'public, max-age=30' });
+    return json({ mapeados: await lsrpMapeados(env) }, 200, { 'cache-control': 'private, no-store' });
   }
   // Servir media de R2 (pública, cacheable): /lsrp/api/media?k=…
   if (path === 'media' && method === 'GET') {
@@ -294,8 +318,31 @@ async function handleLsrp(request, env, url, ctx) {
   if (path === 'admin/normativas' && method === 'POST') {
     const b = await request.json().catch(() => null);
     if (!b || typeof b !== 'object') return json({ error: 'bad_body' }, 400);
-    await lsrpSet(env, 'normativas', b);
-    return json({ ok: true });
+
+    // Borrar un PDF concreto: una sola petición (evita carreras D1 read-after-write).
+    if (b._deleteDocId) {
+      const cur = (await lsrpGet(env, 'normativas')) || { intro: '', docs: [] };
+      const docs = Array.isArray(cur.docs) ? cur.docs : [];
+      const doomed = docs.find((d) => d && d.id === b._deleteDocId);
+      const next = { intro: cur.intro || '', docs: docs.filter((d) => d && d.id !== b._deleteDocId) };
+      await lsrpSet(env, 'normativas', next);
+      if (doomed && doomed.pdfUrl && env.BUCKET) {
+        try {
+          const u = new URL(doomed.pdfUrl, 'https://local');
+          const key = u.searchParams.get('k') || '';
+          if (key.startsWith('lsrp/')) await env.BUCKET.delete(key);
+        } catch (e) { /* best-effort */ }
+      }
+      return json({ ok: true, normativas: next });
+    }
+
+    // Sustituir listado completo (guardar / subir / reordenar).
+    const payload = {
+      intro: typeof b.intro === 'string' ? b.intro : '',
+      docs: Array.isArray(b.docs) ? b.docs : [],
+    };
+    await lsrpSet(env, 'normativas', payload);
+    return json({ ok: true, normativas: payload });
   }
 
   if (path === 'admin/mapeados' && method === 'GET') {
@@ -304,6 +351,11 @@ async function handleLsrp(request, env, url, ctx) {
   if (path === 'admin/mapeados' && method === 'POST') {
     const m = await request.json().catch(() => null);
     if (!m || typeof m !== 'object') return json({ error: 'bad_body' }, 400);
+    // Fallback de borrado (por si DELETE está bloqueado en el proxy)
+    if (m._delete && m.id) {
+      await env.DB.prepare('DELETE FROM lsrp_mapeados WHERE id=?1').bind(String(m.id)).run();
+      return json({ ok: true });
+    }
     if (!m.id) m.id = 'm-' + crypto.randomUUID().slice(0, 8);
     await env.DB.prepare('INSERT INTO lsrp_mapeados (id, orden, json) VALUES (?1,?2,?3) ON CONFLICT(id) DO UPDATE SET orden=?2, json=?3')
       .bind(m.id, Number(m.orden) || 0, JSON.stringify(m)).run();
@@ -328,6 +380,14 @@ async function handleLsrp(request, env, url, ctx) {
       customMetadata: { name },
     });
     return json({ ok: true, key, url: '/lsrp/api/media?k=' + encodeURIComponent(key) });
+  }
+  // Borrar de R2: DELETE /lsrp/api/admin/media?k=lsrp/media/…
+  if (path === 'admin/media' && method === 'DELETE') {
+    if (!env.BUCKET) return json({ error: 'r2_not_configured' }, 503);
+    const key = url.searchParams.get('k') || '';
+    if (!key.startsWith('lsrp/')) return json({ error: 'bad_key' }, 400);
+    await env.BUCKET.delete(key);
+    return json({ ok: true });
   }
 
   return json({ error: 'not_found' }, 404);

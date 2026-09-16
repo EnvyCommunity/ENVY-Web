@@ -30,13 +30,11 @@ export const DEFAULT_SETTINGS: Settings = {
     { label: 'Inicio', href: '#/' },
     { label: 'Normativas', href: '#/normativas' },
     { label: 'Casas', href: '#/casas' },
-    { label: 'Facciones', href: 'https://discord.gg/' },
-    { label: 'Comunidad', href: 'https://discord.gg/' },
-    { label: 'Soporte', href: 'https://discord.gg/' },
+    { label: 'Tienda', href: 'https://envycommunity.tebex.io/' },
   ],
   socials: [
     { label: 'Discord', href: 'https://discord.gg/' },
-    { label: 'Tienda', href: '' },
+    { label: 'Tienda', href: 'https://envycommunity.tebex.io/' },
   ],
   colors: { primary: '#E6E6FA', accent: '#3ba9ff' },
   map: {

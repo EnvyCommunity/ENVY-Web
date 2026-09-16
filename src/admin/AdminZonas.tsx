@@ -20,10 +20,22 @@ export function AdminZonas({ settings, onChange, notify }: { settings: Settings;
     setZonas((zs) => [...zs, { key, label: 'Nueva zona', color: '#3ba9ff', polygon: [] }]);
     setSel(zonas.length);
   }
-  function removeZona(i: number) {
+  async function removeZona(i: number) {
     if (!confirm('¿Eliminar esta zona?')) return;
-    setZonas((zs) => zs.filter((_, j) => j !== i));
-    setSel(0);
+    const nextZonas = zonas.filter((_, j) => j !== i);
+    setBusy(true);
+    try {
+      const next = { ...settings, zonas: nextZonas };
+      await api.saveSettings(next);
+      setZonas(nextZonas);
+      setSel(0);
+      onChange(next);
+      notify('Zona eliminada');
+    } catch {
+      notify('No se pudo eliminar la zona', 'err');
+    } finally {
+      setBusy(false);
+    }
   }
 
   async function save() {

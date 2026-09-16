@@ -65,14 +65,16 @@ export function Uploader({ multiple, onDone, notify, label = 'Subir imagen', acc
 }
 
 // Galería editable: miniaturas con borrar + añadir.
+// El × solo quita la URL de la lista; guarda el mapeado/formulario para persistir.
+// (No borramos R2 aquí para no romper si el usuario cancela sin guardar.)
 export function ImageList({ urls, onChange, notify }: { urls: string[]; onChange: (u: string[]) => void; notify: Notify }) {
   return (
     <div>
       <div className="thumbs">
         {urls.map((u, i) => (
-          <div className="thumb" key={i}>
+          <div className="thumb" key={u + i}>
             <img src={u} alt="" />
-            <button onClick={() => onChange(urls.filter((_, j) => j !== i))}>×</button>
+            <button type="button" onClick={() => onChange(urls.filter((_, j) => j !== i))} aria-label="Quitar imagen">×</button>
           </div>
         ))}
       </div>
